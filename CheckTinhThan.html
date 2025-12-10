@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia 2026 - Bạn Bè Vui Nhộn 🎉</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .start-screen, .game-screen, .result-screen {
+            display: none;
+        }
+
+        .start-screen.active, .game-screen.active, .result-screen.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .start-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .start-button:hover {
+            transform: scale(1.05);
+        }
+
+        .start-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Leaderboard Styles */
+        .leaderboard {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            color: white;
+        }
+
+        .leaderboard h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .leaderboard-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .leaderboard-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .leaderboard-rank {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            font-size: 1.1em;
+        }
+
+        .leaderboard-score {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .leaderboard-empty {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        .score-board {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-name {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .combo-text {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .score {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .question-container {
+            margin-bottom: 25px;
+        }
+
+        .question-number {
+            color: #999;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .choices-container {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .choice-button {
+            padding: 20px;
+            background: #f8f9fa;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-button:hover:not(.disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-color: #667eea;
+        }
+
+        .choice-button.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            animation: correctPulse 0.5s ease;
+        }
+
+        .choice-button.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            animation: wrongShake 0.5s ease;
+        }
+
+        .choice-button.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .meme-container {
+            text-align: center;
+            margin: 20px 0;
+            min-height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .meme-img {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: memeAppear 0.5s ease;
+        }
+
+        @keyframes memeAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.5) rotate(-10deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .result-summary {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .final-score {
+            font-size: 3em;
+            color: #667eea;
+            margin: 20px 0;
+            animation: scoreCount 1s ease;
+        }
+
+        @keyframes scoreCount {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .result-message {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        /* Confetti Animation */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Redirect message */
+        .redirect-message {
+            text-align: center;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: #856404;
+        }
+
+        /* Scrollbar for leaderboard */
+        .leaderboard-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .leaderboard-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .leaderboard-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div class="start-screen active">
+            <h1>🎉 Trivia 2026 🎉</h1>
+            <p class="subtitle">Kiểm tra tình thắm thiết 💖</p>
+
+            <!-- Leaderboard -->
+            <div class="leaderboard">
+                <h2>🏆 Bảng Xếp Hạng 🏆</h2>
+                <div class="leaderboard-list" id="leaderboardList">
+                    <div class="leaderboard-empty">Chưa có ai chơi. Hãy là người đầu tiên!</div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Nhập tên của bạn:</label>
+                <input type="text" id="playerName" placeholder="Tên của bạn..." />
+            </div>
+            <button class="start-button" onclick="startGame()">Bắt đầu chơi! 🚀</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="score-board">
+                <div class="player-info">
+                    <div class="player-name" id="displayName">Player</div>
+                    <div class="combo-text" id="comboText"></div>
+                </div>
+                <div class="score">🏆 <span id="scoreDisplay">0</span></div>
+            </div>
+
+            <div class="question-container">
+                <div class="question-number" id="questionNumber">Câu 1/10</div>
+                <div class="question-text" id="questionText"></div>
+            </div>
+
+            <div class="choices-container" id="choicesContainer"></div>
+
+            <div id="feedbackContainer"></div>
+            <div class="meme-container" id="memeContainer"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="result-screen">
+            <div class="result-summary">
+                <h1>🎊 Kết quả 🎊</h1>
+                <div class="player-name" id="finalName"></div>
+                <div class="final-score" id="finalScore">0/10</div>
+                <div class="result-message" id="resultMessage"></div>
+
+                <div class="stats">
+                    <div class="stat-row">
+                        <span>Câu đúng:</span>
+                        <span id="correctCount">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Câu sai:</span>
+                        <span id="wrongCount">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Combo cao nhất:</span>
+                        <span id="bestCombo">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Tổng điểm:</span>
+                        <span id="totalScore">0</span>
+                    </div>
+                </div>
+
+                <div id="redirectMessage"></div>
+            </div>
+            <div class="meme-container" id="finalMemeContainer"></div>
+            <button class="start-button" id="finalButton" onclick="handleFinalButton()">Về Menu 🏠</button>
+        </div>
+    </div>
+
+    <script>
+        // Meme URLs
+        const WRONG_MEME = "https://www.anhnghethuatdulich.com/wp-content/uploads/2025/11/3-1609128989780552572584.jpg";
+        const CORRECT_MEME = "https://images-ext-1.discordapp.net/external/KAoJb8TCAzrx4DzZaMItH_CBsDROWygSv_i2VUamt5I/%3Fq%3Dtbn%3AANd9GcTO69bYGDrbOJ_hesj74TywA4WccXzTVoaXoQ%26s/https/encrypted-tbn0.gstatic.com/images?format=webp&width=242&height=186";
+        const LOW_SCORE_URL = "https://www.youtube.com/watch?v=Jny6eMxJ8P4";
+
+        // Audio for bonk sound
+        const bonkAudio = new Audio('Bonk Sound Effect.mp3');
+
+        // Game Data with multiple choice
+        const questions = [
+            {
+                question: "Phát sinh ngày máy?",
+                choices: ["25", "27", "30", "15"],
+                correct: 1
+            },
+            {
+                question: "Phát thích chơi game gì?",
+                choices: ["Minecraft", "Roblox", "FIFA", "Valorant"],
+                correct: 0
+            },
+            {
+                question: "Phát thích làm gì một mình?",
+                choices: ["Đọc sách", "Chơi game", "Xem phim", "Ngủ"],
+                correct: 1
+            },
+            {
+                question: "Màu yêu thích của Phát là gì?",
+                choices: ["Đỏ", "Xanh", "Vàng", "Tím"],
+                correct: 1
+            },
+            {
+                question: "Món ăn yêu thích của Phát?",
+                choices: ["Phở", "Bún bò", "Cơm tấm", "Bánh mì"],
+                correct: 0
+            },
+            {
+                question: "Phát thích uống gì?",
+                choices: ["Trà sữa", "Nước ngọt", "Cà phê", "Nước lọc"],
+                correct: 1
+            },
+            {
+                question: "Phát Fan bóng đá đội nào?",
+                choices: ["Man City", "MU", "Liverpool", "Chelsea"],
+                correct: 1
+            },
+            {
+                question: "Phát thích mùa nào nhất?",
+                choices: ["Mùa xuân", "Mùa hạ", "Mùa thu", "Mùa đông"],
+                correct: 3
+            },
+            {
+                question: "Phát dùng mạng xã hội nào nhiều nhất?",
+                choices: ["Facebook", "Instagram", "TikTok", "Twitter"],
+                correct: 2
+            },
+            {
+                question: "Bạn có yêu quý Phát không?",
+                choices: ["Có", "Kó", "Dell", "CC"],
+                correct: 1
+            },
+            {
+                question: "Ngoài chơi game Phát thích làm gì?",
+                choices: ["Chơi thể thao", "Xem anime + đọc truyện", "Nghe nhạc", "Đi du lịch"],
+                correct: 1
+            },
+            {
+                question: "Nhạc phát thích nghe là gì?",
+                choices: ["Suy", "Remix", "Pop", "Rap"],
+                correct: 1
+            },
+            {
+                question: "Phát thích làm gì trong ngày nghỉ?",
+                choices: ["Đi chơi", "Ngủ", "Học Bài", "Đi Cafe"],
+                correct: 1
+            }
+        ];
+
+        // Sound effects using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playCorrectSound() {
+            // Happy melody
+            const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+            notes.forEach((freq, index) => {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
+                    oscillator.frequency.value = freq;
+                    oscillator.type = 'sine';
+
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                }, index * 100);
+            });
+        }
+
+        function playWrongSound() {
+            // Play bonk sound from MP3 file
+            bonkAudio.currentTime = 0; // Reset to start
+            bonkAudio.play().catch(e => console.log('Audio play failed:', e));
+        }
+
+        function playComboSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800;
+            oscillator.type = 'square';
+
+            gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+
+        // Game State
+        let playerName = '';
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+        let combo = 0;
+        let bestCombo = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+
+        // Leaderboard Functions
+        function loadLeaderboard() {
+            const leaderboard = JSON.parse(localStorage.getItem('triviaLeaderboard') || '[]');
+            const leaderboardList = document.getElementById('leaderboardList');
+
+            if (leaderboard.length === 0) {
+                leaderboardList.innerHTML = '<div class="leaderboard-empty">Chưa có ai chơi. Hãy là người đầu tiên!</div>';
+                return;
+            }
+
+            // Sort by score (descending)
+            leaderboard.sort((a, b) => b.score - a.score);
+
+            // Display top 5
+            leaderboardList.innerHTML = leaderboard.slice(0, 5).map((entry, index) => {
+                const rank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+                return `
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">${rank}</span>
+                        <span class="leaderboard-name">${entry.name}</span>
+                        <span class="leaderboard-score">${entry.score} điểm</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function saveScore(name, score) {
+            const leaderboard = JSON.parse(localStorage.getItem('triviaLeaderboard') || '[]');
+            leaderboard.push({
+                name: name,
+                score: score,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('triviaLeaderboard', JSON.stringify(leaderboard));
+        }
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        let shuffledQuestions = [];
+
+        function startGame() {
+            const nameInput = document.getElementById('playerName');
+            playerName = nameInput.value.trim() || 'Player';
+
+            // Shuffle questions for this game
+            shuffledQuestions = shuffleArray(questions);
+
+            document.querySelector('.start-screen').classList.remove('active');
+            document.querySelector('.game-screen').classList.add('active');
+            document.getElementById('displayName').textContent = playerName;
+
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            combo = 0;
+            bestCombo = 0;
+            correctAnswers = 0;
+            wrongAnswers = 0;
+
+            updateProgress();
+            loadQuestion();
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateCombo() {
+            const comboText = document.getElementById('comboText');
+            if (combo > 1) {
+                comboText.textContent = `🔥 Combo x${combo}!`;
+                comboText.style.animation = 'bounce 0.5s ease';
+                setTimeout(() => {
+                    comboText.style.animation = '';
+                }, 500);
+            } else {
+                comboText.textContent = '';
+            }
+        }
+
+        function loadQuestion() {
+            if (currentQuestion >= shuffledQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const question = shuffledQuestions[currentQuestion];
+            document.getElementById('questionNumber').textContent = `Câu ${currentQuestion + 1}/${shuffledQuestions.length}`;
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('memeContainer').innerHTML = '';
+            document.getElementById('feedbackContainer').innerHTML = '';
+            answered = false;
+
+            // Create choice buttons
+            const choicesContainer = document.getElementById('choicesContainer');
+            choicesContainer.innerHTML = '';
+
+            question.choices.forEach((choice, index) => {
+                const button = document.createElement('button');
+                button.className = 'choice-button';
+                button.textContent = choice;
+                button.onclick = () => selectAnswer(index);
+                choicesContainer.appendChild(button);
+            });
+
+            updateProgress();
+        }
+
+        function selectAnswer(selectedIndex) {
+            if (answered) return;
+
+            answered = true;
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = selectedIndex === question.correct;
+
+            // Disable all buttons
+            const buttons = document.querySelectorAll('.choice-button');
+            buttons.forEach((btn, idx) => {
+                btn.classList.add('disabled');
+                if (idx === question.correct) {
+                    btn.classList.add('correct');
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            if (isCorrect) {
+                score += 10;
+                combo++;
+                correctAnswers++;
+                if (combo > bestCombo) {
+                    bestCombo = combo;
+                }
+
+                // Bonus points for combo
+                if (combo > 1) {
+                    score += combo;
+                    playComboSound();
+                }
+
+                document.getElementById('scoreDisplay').textContent = score;
+                updateCombo();
+                showCorrectFeedback();
+                playCorrectSound();
+                createConfetti();
+            } else {
+                combo = 0;
+                wrongAnswers++;
+                updateCombo();
+                showWrongFeedback();
+                playWrongSound();
+            }
+
+            // Auto advance to next question
+            setTimeout(() => {
+                currentQuestion++;
+                loadQuestion();
+            }, 2500);
+        }
+
+        function showCorrectFeedback() {
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback correct';
+
+            let text = '🎉 Chính xác!';
+            if (combo > 3) {
+                text += ` Combo x${combo}! 🔥🔥🔥`;
+            } else if (combo > 1) {
+                text += ` Combo x${combo}! 🔥`;
+            }
+            feedback.textContent = text;
+            document.getElementById('feedbackContainer').appendChild(feedback);
+
+            const memeContainer = document.getElementById('memeContainer');
+            memeContainer.innerHTML = `<img src="${CORRECT_MEME}" alt="Correct!" class="meme-img" />`;
+        }
+
+        function showWrongFeedback() {
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback wrong';
+            feedback.textContent = '❌ Bonk! Sai rồi! Đáp án: ' + shuffledQuestions[currentQuestion].choices[shuffledQuestions[currentQuestion].correct];
+            document.getElementById('feedbackContainer').appendChild(feedback);
+
+            const memeContainer = document.getElementById('memeContainer');
+            memeContainer.innerHTML = `<img src="${WRONG_MEME}" alt="Wrong!" class="meme-img" />`;
+        }
+
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        function showResults() {
+            // Save score to leaderboard
+            saveScore(playerName, score);
+
+            document.querySelector('.game-screen').classList.remove('active');
+            document.querySelector('.result-screen').classList.add('active');
+
+            document.getElementById('finalName').textContent = playerName;
+            document.getElementById('finalScore').textContent = `${correctAnswers}/${shuffledQuestions.length}`;
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('wrongCount').textContent = wrongAnswers;
+            document.getElementById('bestCombo').textContent = bestCombo;
+            document.getElementById('totalScore').textContent = score;
+
+            let message = '';
+            let memeUrl = '';
+            const redirectMessage = document.getElementById('redirectMessage');
+
+            // Very low score (< 50%): redirect to YouTube
+            if (correctAnswers < shuffledQuestions.length * 0.5) {
+                message = '😅 Ối! Bạn cần chú ý hơn với bạn bè nha! 😅';
+                memeUrl = WRONG_MEME;
+                redirectMessage.innerHTML = '<div class="redirect-message">⏰ Đang chuyển hướng... 3 giây nữa bạn sẽ được xem một video đặc biệt!</div>';
+
+                // Redirect after 3 seconds
+                setTimeout(() => {
+                    window.location.href = LOW_SCORE_URL;
+                }, 3000);
+            }
+            // Low score (< 80%): lì xì message
+            else if (correctAnswers < shuffledQuestions.length * 0.8) {
+                message = '😊 Khá đấy! Nhưng dưới 80% rồi...';
+                memeUrl = CORRECT_MEME;
+                redirectMessage.innerHTML = '<div class="redirect-message">💰 Tết lì xì cho t nha! 🧧</div>';
+            }
+            // High score (>= 80%): congratulations
+            else {
+                if (correctAnswers === shuffledQuestions.length) {
+                    message = '🏆 Hoàn hảo! Bạn là bạn thân nhất! 🏆';
+                    memeUrl = CORRECT_MEME;
+                    createConfetti();
+                    createConfetti();
+                } else {
+                    message = '👏 Tuyệt vời! Bạn hiểu rõ về bạn bè! 👏';
+                    memeUrl = CORRECT_MEME;
+                    createConfetti();
+                }
+                redirectMessage.innerHTML = '';
+            }
+
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('finalMemeContainer').innerHTML = `
+                <img src="${memeUrl}" alt="Result" class="meme-img" />
+            `;
+        }
+
+        function handleFinalButton() {
+            document.querySelector('.result-screen').classList.remove('active');
+            document.querySelector('.start-screen').classList.add('active');
+            loadLeaderboard(); // Reload leaderboard to show new score
+        }
+
+        // Load leaderboard on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLeaderboard();
+        });
+
+        // Allow Enter key to submit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (document.querySelector('.start-screen').classList.contains('active')) {
+                    startGame();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
